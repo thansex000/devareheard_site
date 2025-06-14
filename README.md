@@ -52,3 +52,5 @@ export default tseslint.config({
   },
 })
 ```
+use icon:  npm install lucide-react
+use "rafce": create page ts,tsx new

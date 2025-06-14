@@ -3,14 +3,18 @@
 export interface IUser {
     id: string;
     username: string;
-    email: string;
-    createdAt: Date;
-    updatedAt?: Date;
-    isActive: boolean;
+    password: string;
+    refreshtoken: string;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface IStoreUser<T = IUser> {
     accesstoken: string;
-    refreshToken: string;
     user: T;
+}
+
+export interface IUserLogin {
+    username?: string;
+    password?: string;
 }

@@ -6,6 +6,7 @@ import { login, logout } from '@/store/userSlice';
 import { PATH } from '@/lib/config';
 
 
+// chỉ xử lý sau khi giải quyết từ backend 
 
 export const useAuth = () => {
     const auth = useSelector((state: RootState) => state.userSlice.user);
@@ -16,26 +17,31 @@ export const useUser = () => {
     return user;
 };
 export const useRefreshToken = () => {
-    const refreshToken = useSelector((state: RootState) => state.userSlice.refreshToken);
+    const refreshToken = useSelector((state: RootState) => state.userSlice.user.refreshtoken);
     return refreshToken;
 };
 export const useAccessToken = () => {
     const accessToken = useSelector((state: RootState) => state.userSlice.accesstoken);
     return accessToken;
 };
-export const useLogin = (user: IStoreUser) => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-        dispatch(login(user));
-        navigate(PATH.HOME);
-};
+export const useLogin = () => {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    return (user: IStoreUser) => {
+        dispatch(login(user))
+        navigate(PATH.HOME)
+    }
+}
 export const useLogout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    dispatch(logout());
-    navigate(PATH.LOGIN);
+    return () => {
+        dispatch(logout());
+        navigate(PATH.LOGIN);
+    };
 };
 export const useUpdateUser = (user: IStoreUser) => {
-     const dispatch = useDispatch();
+    const dispatch = useDispatch();
     dispatch(login(user));
 };

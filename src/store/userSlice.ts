@@ -4,16 +4,17 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 const initialUserState: IStoreUser = {
     accesstoken: getCookie('accessToken') || '',
-    refreshToken: getCookie('refreshToken') || '',
+    // refreshToken: getCookie('refreshToken') || '',
     user: getCookie('user') ? JSON.parse(getCookie('user') || '') as IUser : {
         id: '',
         username: '',
-        email: '',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isActive: false,
+        password: '',
+        refreshtoken: '',
+        created_at: new Date(),
+        updated_at: new Date(),
     }
 }
+
 
 const userSlice = createSlice({
     name: 'userSlice',
@@ -21,23 +22,21 @@ const userSlice = createSlice({
     reducers: {
         login: (state, action: PayloadAction<IStoreUser>) => {
             state.accesstoken = action.payload.accesstoken
-            state.refreshToken = action.payload.refreshToken
             state.user = action.payload.user
 
             setCookie('accessToken', action.payload.accesstoken, 1) // 1 hour
             setCookie('user', JSON.stringify(action.payload.user), 1) // 1hour
-            setCookie('refreshToken', action.payload.refreshToken, 1)// 1hour
+            setCookie('refreshToken', action.payload.user.refreshtoken, 1)// 1hour
         },
         logout: (state) => {
             state.accesstoken = ''
-            state.refreshToken = ''
             state.user = {
                 id: '',
                 username: '',
-                email: '',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                isActive: false,
+                password: '',
+                refreshtoken: '',
+                created_at: new Date(),
+                updated_at: new Date(),
             }
 
             setCookie('accessToken', '', -1)
@@ -52,5 +51,5 @@ const userSlice = createSlice({
     },
 })
 
-export const { login , logout,updateUser } = userSlice.actions
+export const { login, logout, updateUser } = userSlice.actions
 export default userSlice.reducer
