@@ -11,10 +11,10 @@ import InputField from "@/components/custom/Inputcs"
 
 
 const LoginPage: React.FC = () => {
-  const { values, handleChange, errors, setFieldError } = useForm({ username: "", password: "" }) 
+  const { values, handleChange, errors, setFieldError } = useForm({ username: "", password: "" })
   const loginHandler = useLogin()
   const btnLoginRef = useRef<HTMLAnchorElement>(null)
-  
+
 
 
 
@@ -22,8 +22,11 @@ const LoginPage: React.FC = () => {
     e.preventDefault()
     try {
       const res = await login(values)
-      if (res.data) loginHandler(res.data)
-    } catch (error) {// 
+      if (res.data) {
+        console.log("chuyển hướng")
+        loginHandler(res.data)
+      }// ✅ gọi đúng hàm từ hook
+    } catch (error) {
       setFieldError("username", error as string | '')
     }
   }

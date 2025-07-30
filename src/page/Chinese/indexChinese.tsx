@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Tablecs from '@/components/custom/Tablecs'
 import Checkboxcs from '@/components/custom/Checkboxcs'
-import { fechvocabulary_chinese } from '@/api/lang/chinese'
+import { fechvocabulary_chinese, my_vocabulary } from '@/api/lang/chinese'
 import type { Ichinese } from '@/models/lang/IChinese'
 import type { PaginatedResult } from '@/models/IBase'
 import type { VocabularyChinese } from '@/models/lang/IVocabulary'
 import ModelNotification from '@/components/custom/ModelNotifycation'
+import type { IMyVocabulary } from '@/models/lang/IMyVocabulary'
+import { useSelector } from 'react-redux'
+import type { RootState } from '@/store'
 
 const IndexChinese: React.FC = () => {
     const [vocabList, setVocabList] = useState<PaginatedResult<VocabularyChinese>>()
@@ -16,7 +19,7 @@ const IndexChinese: React.FC = () => {
     const [checkedIds, setCheckedIds] = useState<number[]>([])
     const [show, setShow] = useState(false)
     const [selectedId, setSelectedId] = useState<number | null>(null)
-
+    const userId = useSelector((state: RootState) => state.userSlice.user.id)
 
     const handleFetch = async (page: number, limit: number) => {
         setLoading(true)
@@ -33,25 +36,35 @@ const IndexChinese: React.FC = () => {
 
     useEffect(() => {
         handleFetch(page, limit)
-    }, [page, limit])
+        console.log("Giá trị mới của checkedIds:", checkedIds)
+    }, [page, limit, checkedIds])
 
-    const toggleCheck = (id: number) => {
+    const toggleCheck = async (id: number) => {
         setCheckedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         )
-        console.log(checkedIds)
+        const req: IMyVocabulary = {
+            id_user: userId, // ví dụ ID người dùng, thay bằng dữ liệu thật
+            id: id,       // ID từ vựng vừa được chọn
+            lang: "zh", // tên bảng hoặc ngôn ngữ phù hợp
+            note: "" // nếu cần ghi chú
+        };
+
+        try {
+            const addMyVocab = await my_vocabulary(req);
+            console.log("Đã thêm từ vựng:", addMyVocab);
+        } catch (error) {
+            console.error("Lỗi khi thêm từ vựng:", error);
+        }
     }
 
     const isChecked = (id: number) => checkedIds.includes(id)
 
-    const Note = () => {
-        // const checkedWords = vocabList?.data.filter(item => checkedIds.includes(item.id)).map(item => item.id) || []
-
-    }
 
     return (
         <>
             <Tablecs
+                loading={loading}
                 title="Danh sách từ vựng"
                 colums={['STT', 'Từ', 'Loại', 'Nghĩa', '']}
                 row={
@@ -73,7 +86,6 @@ const IndexChinese: React.FC = () => {
             />
 
             <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
-                <Button onClick={Note}></Button>
 
                 {/* chọn số dòng / trang */}
                 <div className="flex items-center gap-2 text-sm">

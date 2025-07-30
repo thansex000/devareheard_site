@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react';
+import React, { type ReactNode } from 'react'
 import {
   Table,
   TableCaption,
@@ -7,15 +7,16 @@ import {
   TableRow,
   TableBody,
   TableCell
-} from '../ui/table';
+} from '../ui/table'
 
 interface PropTable {
-  title: string;
-  colums: string[];
-  row: ReactNode[][];
+  title: string
+  colums: string[]
+  row: ReactNode[][]
+  loading: boolean
 }
 
-const Tablecs: React.FC<PropTable> = ({ title, colums, row }) => {
+const Tablecs: React.FC<PropTable> = ({ title, colums, row, loading }) => {
   return (
     <div className="rounded-lg border shadow-md overflow-x-auto">
       <Table>
@@ -34,25 +35,33 @@ const Tablecs: React.FC<PropTable> = ({ title, colums, row }) => {
         </TableHeader>
 
         <TableBody>
-          {row.map((rowData, rowIndex) => (
-            <TableRow
-              key={rowIndex}
-              className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-            >
-              {rowData.map((cell, cellIndex) => (
-                <TableCell
-                  key={cellIndex}
-                  className="px-4 py-2 border-b border-gray-200 text-sm text-gray-800"
-                >
-                  {cell}
-                </TableCell>
-              ))}
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={colums.length} className="text-center py-4">
+                Đang tải dữ liệu...
+              </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            row.map((rowData, rowIndex) => (
+              <TableRow
+                key={rowIndex}
+                className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+              >
+                {rowData.map((cell, cellIndex) => (
+                  <TableCell
+                    key={cellIndex}
+                    className="px-4 py-2 border-b border-gray-200 text-sm text-gray-800"
+                  >
+                    {cell}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>
-  );
-};
+  )
+}
 
-export default Tablecs;
+export default Tablecs

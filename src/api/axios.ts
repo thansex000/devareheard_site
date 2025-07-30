@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { HOST, MAX_TIME_OUT, STATUS } from './config';
-import { useAccessToken } from '@/service/authService';
+import { store } from '@/store';
 
-
-const api = axios.create({
+const Axios = axios.create({
     baseURL: HOST,
     timeout: MAX_TIME_OUT,
     headers: {
@@ -17,35 +16,32 @@ const isStatus = (code: number, statusObj: Record<string, number>) => {
     return Object.values(statusObj).includes(code);
 };
 
-
-
-api.interceptors.request.use(
+Axios.interceptors.request.use(
     (config) => {
-        const token = useAccessToken();
-        const shouldSendToken = config?.headers?._auth !== false
+        const token = store.getState().userSlice.accesstoken;
+        console.log("🔥 Token hiện tại:", token); // ✅ Tạm bật để kiểm tra token
+
+        const shouldSendToken = !(config?.headers && config.headers._auth === false);
 
         if (shouldSendToken && token && config.headers) {
-            config.headers.Authorization = `Bearer ${token}`
+            config.headers.Authorization = `Bearer ${token}`;
         }
 
-        // ✅ Xoá _auth để tránh gửi thừa về server
         if (config?.headers?._auth !== undefined) {
-            delete config.headers._auth
+            delete config.headers._auth;
         }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
-// ✅ Response Interceptor
-api.interceptors.response.use(
+Axios.interceptors.response.use(
     (response) => {
         const { status, data } = response;
 
         if (isStatus(status, STATUS.success)) {
-            return data; // Trả đúng phần data
+            return data;
         }
 
         if (isStatus(status, STATUS.error)) {
@@ -56,14 +52,12 @@ api.interceptors.response.use(
             });
         }
 
-        // Trường hợp không xác định
         return Promise.reject({
             status,
             message: 'Unknown status',
             data,
         });
     },
-
     (error) => {
         const res = error.response;
 
@@ -75,4 +69,4 @@ api.interceptors.response.use(
     }
 );
 
-export default api;
+export default Axios;

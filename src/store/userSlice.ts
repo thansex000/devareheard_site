@@ -6,7 +6,7 @@ const initialUserState: IStoreUser = {
     accesstoken: getCookie('accessToken') || '',
     // refreshToken: getCookie('refreshToken') || '',
     user: getCookie('user') ? JSON.parse(getCookie('user') || '') as IUser : {
-        id: '',
+        id: 0,
         username: '',
         password: '',
         refreshtoken: '',
@@ -31,7 +31,7 @@ const userSlice = createSlice({
         logout: (state) => {
             state.accesstoken = ''
             state.user = {
-                id: '',
+                id: 0,
                 username: '',
                 password: '',
                 refreshtoken: '',

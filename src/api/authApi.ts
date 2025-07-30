@@ -3,13 +3,14 @@ import type { IStoreUser, IUserLogin } from '@/models/IUser';
 import axios from 'axios';
 import { HOST } from './config';
 import type { IBaseResponse } from '@/models/IBase';
+import Axios from './axios';
 
-
-const api = HOST
+const API = HOST
 
 
 export const login = async (data: IUserLogin): Promise<IBaseResponse<IStoreUser>> => {
-    const response = await axios.post(`${api}auth/login`, data);
+    const response = await Axios.post(`${API}auth/login`, data
+    );
     return response.data as IBaseResponse<IStoreUser>;
 };
 
